@@ -10,12 +10,27 @@ var apiHandler = {
       console.error(error);
     });
   },
+
   handleUpdate: function(req, res) {
 
   },
+
   handleUpload: function (req, res) {
 
   },
+
+  handleRemove: function (req, res) {
+    var path = req.params.path;
+    try{
+      fileSystem.remove(path);
+      res.writeHead(201);
+      res.end('folder' + path + 'deleted');
+    }catch(e){
+      res.writeHead(500);
+      res.end(e + '');
+    }
+  },
+
   handleMkDir: function (req, res) {
     var path = req.params.path;
     try{

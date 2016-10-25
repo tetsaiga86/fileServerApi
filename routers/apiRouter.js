@@ -16,4 +16,6 @@ apiRouter.post('/upload/:path', function (req, res) {
 
 apiRouter.post('/mkdir/:path?', apiHandler.handleMkDir);
 
+apiRouter.delete('/remove/:path', apiHandler.handleRemove);
+
 module.exports = apiRouter;
