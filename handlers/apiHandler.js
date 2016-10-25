@@ -15,6 +15,17 @@ var apiHandler = {
   },
   handleUpload: function (req, res) {
 
+  },
+  handleMkDir: function (req, res) {
+    var path = req.params.path;
+    try{
+      fileSystem.mkDir(path);
+      res.writeHead(201);
+      res.end('folder created');
+    }catch(error){
+      res.writeHead(500);
+      res.end(error + '');
+    }
   }
 };
 

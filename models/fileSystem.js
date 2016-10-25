@@ -1,6 +1,7 @@
 const fs = require('fs');
 const root = 'C:/Users/Kyle/Music/'
 var Promise = require('es6-promise').Promise;
+var mkdirInput = '';
 
 var fileSystem = {
   getChildList: function(dir){
@@ -21,6 +22,10 @@ var fileSystem = {
         );
       });
     });
+  },
+
+  mkDir: function (dir) {
+    fs.mkdirSync(root+(dir||''));  
   }
 };
 

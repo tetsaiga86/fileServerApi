@@ -14,4 +14,6 @@ apiRouter.post('/upload/:path', function (req, res) {
   apiHandler.handleUpload(req, res);
 });
 
+apiRouter.post('/mkdir/:path?', apiHandler.handleMkDir);
+
 module.exports = apiRouter;
