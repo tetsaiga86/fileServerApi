@@ -39,7 +39,6 @@ var apiHandler = {
 
   handleUploadFile: function (req, res) {
     var newFile = req.files.fileData;
-    console.log(req);
     var path = req.params.path;
     try{
       fileSystem.uploadFile(path, newFile);

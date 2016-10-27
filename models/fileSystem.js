@@ -53,10 +53,10 @@ var fileSystem = {
   uploadFile: function(dir, newFile){
     var source = newFile.path;
     var destination = root + dir;
-    //fs.rename(newFile.path, destination, function(err){
-    console.log(newFile.path + ' will be moved to ' + root + dir);
-      //if(err) return console.log(err + '');
-    //});
+    fs.rename(newFile.path, destination, function(err){
+      if(err) return console.log(err + '');
+      console.log(newFile.path + ' will be moved to ' + root + dir);
+    });
   },
 
   rename: function(dir, newName){
