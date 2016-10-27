@@ -11,9 +11,9 @@ apiRouter.post('/mkdir/:path', apiHandler.handleMkDir);
 
 apiRouter.delete('/remove/:path', apiHandler.handleRemove);
 
-//TODO:
 apiRouter.post('/upload/:path?', apiHandler.handleUploadFile);
 
+//TODO:
 apiRouter.put('/update/:path', apiHandler.handleUpdate);
 
 module.exports = apiRouter;

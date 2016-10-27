@@ -12,6 +12,7 @@ var apiHandler = {
     });
   },
 
+// TODO: upload already overrites, so update seems redundant
   handleUpdate: function(req, res) {
     var path = req.params.path;
     try{
