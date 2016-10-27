@@ -2,6 +2,34 @@ const fs = require('fs');
 const root = 'C:/Users/Kyle/Music/';
 var Promise = require('es6-promise').Promise;
 
+var _isDescendantOfRoot = function(path) {
+  return true;
+  // returns bool
+  // TODO: implement this
+};
+
+var _isPathEqual = function(path1, path2) {
+  return true;
+  // returns bool
+  // TODO: implement this
+};
+
+var _isWritablePath = function(path) {
+  // returns bool
+  // TODO: implement this
+  return true;
+};
+
+var _isDeletablePath = function(path) {
+  return true;
+  // TODO: implement this
+};
+
+function _isReadablePath(path) {
+  return true;
+  // TODO: implement this
+}
+
 var fileSystem = {
   getChildList: function(dir){
     //TODO: clear ending '/' from dir
@@ -22,13 +50,23 @@ var fileSystem = {
       });
     });
   },
-  //TODO:uploadfile not working
   uploadFile: function(dir, newFile){
-    console.log(newFile + ' will be moved to ' + root + dir);
+    var source = newFile.path;
+    var destination = root + dir;
+    //fs.rename(newFile.path, destination, function(err){
+    console.log(newFile.path + ' will be moved to ' + root + dir);
+      //if(err) return console.log(err + '');
+    //});
   },
 
   rename: function(dir, newName){
-    fs.rename(root + (dir || ''), root + newName, function(){
+    var source = root + (dir || '');
+    var destination = root + newName;
+
+    if (!_isWritablePath(destination)) {
+      throw `Destination not writable: ${destination}`;
+    }
+    fs.rename(source, destination, function(){
 
     });
   },

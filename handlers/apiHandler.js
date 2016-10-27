@@ -38,7 +38,8 @@ var apiHandler = {
   },
 
   handleUploadFile: function (req, res) {
-    var newFile = req.body.newFile;
+    var newFile = req.files.fileData;
+    console.log(req);
     var path = req.params.path;
     try{
       fileSystem.uploadFile(path, newFile);
@@ -46,7 +47,7 @@ var apiHandler = {
       res.end('try completed for:\n upload file ' + path);
     }catch(e){
       res.writeHead(500);
-      res.end(e + '');
+      res.end(e.stack);
     }
   },
 
