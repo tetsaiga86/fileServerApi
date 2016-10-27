@@ -2,20 +2,18 @@ var express = require('express');
 var apiRouter = express.Router();
 var apiHandler = require('../handlers/apiHandler');
 
-apiRouter.get('/list/:path?', function(req, res) {
-  apiHandler.handleList(req, res);
-});
+//done:
+apiRouter.get('/list/:path?', apiHandler.handleList);
 
-apiRouter.put('/update/:path', function(req, res) {
-  apiHandler.handleUpdate(req, res);
-});
+apiRouter.post('/rename/:path?', apiHandler.handleRename);
 
-apiRouter.post('/upload/:path', function (req, res) {
-  apiHandler.handleUpload(req, res);
-});
-
-apiRouter.post('/mkdir/:path?', apiHandler.handleMkDir);
+apiRouter.post('/mkdir/:path', apiHandler.handleMkDir);
 
 apiRouter.delete('/remove/:path', apiHandler.handleRemove);
+
+//TODO:
+apiRouter.post('/upload/:path?', apiHandler.handleUploadFile);
+
+apiRouter.put('/update/:path', apiHandler.handleUpdate);
 
 module.exports = apiRouter;

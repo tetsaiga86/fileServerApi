@@ -1,8 +1,12 @@
 {
   "name": "file-server-api",
   "version": "1.0.0",
-  "description": "",
+  "description": "file server api for personal use",
   "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tetsaiga86/fileServerApi"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,6 +15,7 @@
   "dependencies": {
     "es6-promise": "^4.0.5",
     "express": "^4.14.0",
+    "express-formidable": "^1.0.0",
     "fs": "0.0.1-security"
   }
 }

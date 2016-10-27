@@ -1,4 +1,5 @@
-fileSystem = require('../models/fileSystem');
+const fileSystem = require('../models/fileSystem');
+const formidable = require('express-formidable');
 
 var apiHandler = {
   handleList: function (req, res) {
@@ -12,19 +13,49 @@ var apiHandler = {
   },
 
   handleUpdate: function(req, res) {
-
+    var path = req.params.path;
+    try{
+      fileSystem.update(path);
+      res.writeHead(202);
+      res.end('try completed for:\n the file ' + path + ' has been updated');
+    }catch(e){
+      res.writeHead(500);
+      res.end(e + '');
+    }
   },
 
-  handleUpload: function (req, res) {
+  handleRename: function (req, res) {
+    var path = req.params.path;
+    var newPath = req.fields.newPath;
+    try{
+      fileSystem.rename(path, newPath);
+      res.writeHead(202);
+      res.end('try completed for:\n the file ' + path + ' has been renamed to ' + newPath);
+    }catch(e){
+      res.writeHead(500);
+      res.end(e + '');
+    }
+  },
 
+  handleUploadFile: function (req, res) {
+    var newFile = req.body.newFile;
+    var path = req.params.path;
+    try{
+      fileSystem.uploadFile(path, newFile);
+      res.writeHead(202);
+      res.end('try completed for:\n upload file ' + path);
+    }catch(e){
+      res.writeHead(500);
+      res.end(e + '');
+    }
   },
 
   handleRemove: function (req, res) {
     var path = req.params.path;
     try{
       fileSystem.remove(path);
-      res.writeHead(201);
-      res.end('folder' + path + 'deleted');
+      res.writeHead(202);
+      res.end('try completed for:\n folder ' + path + ' deleted');
     }catch(e){
       res.writeHead(500);
       res.end(e + '');
@@ -36,7 +67,7 @@ var apiHandler = {
     try{
       fileSystem.mkDir(path);
       res.writeHead(201);
-      res.end('folder created');
+      res.end('try completed for:\n ' + path + ' folder created');
     }catch(error){
       res.writeHead(500);
       res.end(error + '');
