@@ -12,6 +12,20 @@ var apiHandler = {
     });
   },
 
+  handleDownload: function(req, res){
+    var path = req.params.path;
+    try{
+      var file = fileSystem.getFileBytes(path);
+      res.setHeader('Content-Length', file.length);
+      res.writeHead(200);
+      res.write(file, 'binary');
+      res.end();
+    }catch(e){
+      res.writeHead(500);
+      res.end(e.stack);
+    }
+  },
+
 // TODO: upload already overrites, so update seems redundant
   handleUpdate: function(req, res) {
     var path = req.params.path;
@@ -21,7 +35,7 @@ var apiHandler = {
       res.end('try completed for:\n the file ' + path + ' has been updated');
     }catch(e){
       res.writeHead(500);
-      res.end(e + '');
+      res.end(e.stack);
     }
   },
 
@@ -34,7 +48,7 @@ var apiHandler = {
       res.end('try completed for:\n the file ' + path + ' has been renamed to ' + newPath);
     }catch(e){
       res.writeHead(500);
-      res.end(e + '');
+      res.end(e.stack);
     }
   },
 
@@ -59,7 +73,7 @@ var apiHandler = {
       res.end('try completed for:\n folder ' + path + ' deleted');
     }catch(e){
       res.writeHead(500);
-      res.end(e + '');
+      res.end(e.stack);
     }
   },
 

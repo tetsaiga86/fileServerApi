@@ -1,6 +1,6 @@
 const fs = require('fs');
 const root = 'C:/Users/Kyle/Music/';
-var Promise = require('es6-promise').Promise;
+var PromiseEs6 = require('es6-promise').Promise;
 
 var _isDescendantOfRoot = function(path) {
   return true;
@@ -33,7 +33,7 @@ function _isReadablePath(path) {
 var fileSystem = {
   getChildList: function(dir){
     //TODO: clear ending '/' from dir
-    return new Promise(function(resolve, reject) {
+    return new PromiseEs6(function(resolve, reject) {
       fs.stat(root + (dir || ''), (err, stats) => {
         if (err) return reject(err);
         if (!stats.isDirectory()) {
@@ -57,6 +57,10 @@ var fileSystem = {
       if(err) return console.log(err + '');
       console.log(newFile.path + ' will be moved to ' + root + dir);
     });
+  },
+
+  getFileBytes: function(dir){
+    return fs.readFileSync(root + dir, 'binary');
   },
 
   rename: function(dir, newName){

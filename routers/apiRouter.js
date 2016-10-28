@@ -13,6 +13,8 @@ apiRouter.delete('/remove/:path', apiHandler.handleRemove);
 
 apiRouter.post('/upload/:path?', apiHandler.handleUploadFile);
 
+apiRouter.get('/download/:path', apiHandler.handleDownload);
+
 //TODO:
 apiRouter.put('/update/:path', apiHandler.handleUpdate);
 
