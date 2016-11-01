@@ -2,57 +2,83 @@ const fs = require('fs');
 const root = 'C:/Users/Kyle/Music/';
 var PromiseEs6 = require('es6-promise').Promise;
 
-var _isDescendantOfRoot = function(path) {
-  return true;
-  // returns bool
-  // TODO: implement this
+function _sanitizedPath(path){
+  var splitPath = path.split('/');
+  var newPath = [];
+  for (var index in splitPath) {
+    if (splitPath[index] != '..') {
+      newPath.push(splitPath[index]);
+    }
+  }
+  return newPath.join('/');
+}
+
+function _isDescendantOfRoot (path) {
+  try {
+    var strippedPath = path.match(root);
+    if (strippedPath[0] != root || path === root) return false;
+    return true;
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
 };
 
-var _isPathEqual = function(path1, path2) {
-  return true;
-  // returns bool
-  // TODO: implement this
+function _isWritablePath(path) {
+  if(_isDescendantOfRoot(path) || path === root) return true;
+  return false;
 };
 
-var _isWritablePath = function(path) {
-  // returns bool
-  // TODO: implement this
-  return true;
-};
-
-var _isDeletablePath = function(path) {
-  return true;
-  // TODO: implement this
+function _isDeletablePath (path) {
+  if(_isDescendantOfRoot(path)) return true;
+  return false;
 };
 
 function _isReadablePath(path) {
-  return true;
-  // TODO: implement this
+  if(_isDescendantOfRoot(path) || path === root) return true;
+  return false;
 }
+
+function _isPathEqual(path1, path2) {
+  var path1Stat = fs.statSync(path1);
+  var path2Stat = fs.statSync(path2);
+
+  if (path1Stat.ino === path2Stat.ino) return true;
+  return false;
+};
 
 var fileSystem = {
   getChildList: function(dir){
-    //TODO: clear ending '/' from dir
+    var path = root + (dir || '');
+    if (!_isReadablePath(path)) {
+      throw `Requested path is not readable: ${path}`;
+    }
     return new PromiseEs6(function(resolve, reject) {
-      fs.stat(root + (dir || ''), (err, stats) => {
+      fs.stat(path, (err, stats) => {
         if (err) return reject(err);
         if (!stats.isDirectory()) {
           return reject('Item at given path is not a directory.');
         }
-        fileNames = filteredFileList(root + (dir || ''));
+        fileNames = filteredFileList(path);
         resolve(
           fileNames.map(
             fileName => {
-              return decorateFile(root + (dir || '') + fileName);
+              return decorateFile(path + fileName);
             }
           )
         );
       });
     });
   },
+
+  sanitizedPath: _sanitizedPath,
+
   uploadFile: function(dir, newFile){
     var source = newFile.path;
     var destination = root + dir;
+    if (!_isWritablePath(destination)) {
+      throw `Destination not writable: ${destination}`;
+    }
     fs.rename(newFile.path, destination, function(err){
       if(err) return console.log(err + '');
       console.log(newFile.path + ' will be moved to ' + root + dir);
@@ -67,47 +93,54 @@ var fileSystem = {
     var source = root + (dir || '');
     var destination = root + newName;
 
+    if (!_isReadablePath(source)) {
+      throw `Requested path is not readable: ${source}`;
+    }
     if (!_isWritablePath(destination)) {
       throw `Destination not writable: ${destination}`;
     }
-    fs.rename(source, destination, function(){
 
+    fs.rename(source, destination, function(){
     });
   },
 
   mkDir: function (dir) {
-    fs.mkdirSync(root + (dir || ''));
-  },
-
-  update: function (dir, updatedFile){
-
+    var path = root + (dir || '');
+    if(!_isWritablePath(path)){
+      throw `Destination not writable: ${path}`;
+    }
+    fs.mkdirSync(path);
   },
 
   remove: function (dir) {
-    fs.stat(root + dir, (err, stats) => {
+    var path = root + (dir || '');
+    if(!_isDeletablePath(path)){
+      throw `Requested path is not deletable: ${path}`;
+    }
+    fs.stat(path, (err, stats) => {
       try{
-        stats = decorateFile(root + dir);
+        stats = decorateFile(path);
         if (!stats.isDir) {
-          fs.unlink(root + dir, function (e){
+          fs.unlink(path, function (e){
             if (e) return console.error(e);
-            return console.log('the file at ' + root + dir + ' has been deleted');
+            return console.log('the file at ' + path + ' has been deleted');
           });
         }else if (stats.childCount < 1) {
-          fs.rmdir(root + dir, function (e){
+          fs.rmdir(path, function (e){
             if (e) return console.error(e);
-            return console.log('the empty folder at ' + root + dir + ' has been deleted');
+            return console.log('the empty folder at ' + path + ' has been deleted');
           });
         }else{
-          if(decorateFile(root).ino != decorateFile(root + (dir || '')).ino){
-            rmdirRecursive(root + dir, function (e) {
+          if(decorateFile(root).ino != decorateFile(path).ino){
+            rmdirRecursive(path, function (e) {
               if (e) return console.error(e);
             });
-            return console.log('the folder ' + root + dir + ' and all inner files have been deleted');
+            return console.log('the folder ' + path + ' and all inner files have been deleted');
 
           }
         }
       }catch(err){
-        console.log(err + '');
+        console.log(err.stack);
       }
     });
   }
@@ -126,7 +159,6 @@ function decorateFile(path) {
   var length = splitPath.length;
   fileStats.name = splitPath[length - 1];
   return fileStats;
-  //return fs.statSync(path);
 }
 
 function rmdirRecursive(path, callback) {

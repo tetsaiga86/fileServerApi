@@ -3,7 +3,14 @@ const formidable = require('express-formidable');
 
 var apiHandler = {
   handleList: function (req, res) {
-    var path = req.params.path;
+    var path;
+    if(req.params.path){
+      path = fileSystem.sanitizedPath(req.params.path);
+      //console.log(`${path} is clean`);
+    } else {
+      path = req.params.path;
+      //console.log(`${path} doesn't exist`);
+    }
     fileSystem.getChildList(path).then(function(children){
       res.json(children);
     })
@@ -13,7 +20,7 @@ var apiHandler = {
   },
 
   handleDownload: function(req, res){
-    var path = req.params.path;
+    var path = fileSystem.sanitizedPath(req.params.path);
     try{
       var file = fileSystem.getFileBytes(path);
       res.setHeader('Content-Length', file.length);
@@ -26,11 +33,11 @@ var apiHandler = {
     }
   },
 
-// TODO: upload already overrites, so update seems redundant
   handleUpdate: function(req, res) {
-    var path = req.params.path;
+    var newFile = req.files.fileData;
+    var path = fileSystem.sanitizedPath(req.params.path);
     try{
-      fileSystem.update(path);
+      fileSystem.uploadFile(path, newFile);
       res.writeHead(202);
       res.end('try completed for:\n the file ' + path + ' has been updated');
     }catch(e){
@@ -40,8 +47,8 @@ var apiHandler = {
   },
 
   handleRename: function (req, res) {
-    var path = req.params.path;
-    var newPath = req.fields.newPath;
+    var path = fileSystem.sanitizedPath(req.params.path);
+    var newPath = fileSystem.sanitizedPath(req.fields.newPath);
     try{
       fileSystem.rename(path, newPath);
       res.writeHead(202);
@@ -54,7 +61,7 @@ var apiHandler = {
 
   handleUploadFile: function (req, res) {
     var newFile = req.files.fileData;
-    var path = req.params.path;
+    var path = fileSystem.sanitizedPath(req.params.path);
     try{
       fileSystem.uploadFile(path, newFile);
       res.writeHead(202);
@@ -66,7 +73,7 @@ var apiHandler = {
   },
 
   handleRemove: function (req, res) {
-    var path = req.params.path;
+    var path = fileSystem.sanitizedPath(req.params.path);
     try{
       fileSystem.remove(path);
       res.writeHead(202);
@@ -78,7 +85,7 @@ var apiHandler = {
   },
 
   handleMkDir: function (req, res) {
-    var path = req.params.path;
+    var path = fileSystem.sanitizedPath(req.params.path);
     try{
       fileSystem.mkDir(path);
       res.writeHead(201);
