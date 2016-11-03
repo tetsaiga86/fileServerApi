@@ -16,8 +16,7 @@ function _sanitizedPath(path){
 function _isDescendantOfRoot (path) {
   try {
     var strippedPath = path.match(root);
-    if (strippedPath[0] != root || path === root) return false;
-    return true;
+    return !(strippedPath[0] != root || path === root);
   } catch (e) {
     console.error(e);
     return false;
@@ -25,26 +24,22 @@ function _isDescendantOfRoot (path) {
 };
 
 function _isWritablePath(path) {
-  if(_isDescendantOfRoot(path) || path === root) return true;
-  return false;
+  return (_isDescendantOfRoot(path) || path === root);
 };
 
 function _isDeletablePath (path) {
-  if(_isDescendantOfRoot(path)) return true;
-  return false;
+  return _isDescendantOfRoot(path);
 };
 
 function _isReadablePath(path) {
-  if(_isDescendantOfRoot(path) || path === root) return true;
-  return false;
+  return (_isDescendantOfRoot(path) || path === root);
 }
 
 function _isPathEqual(path1, path2) {
   var path1Stat = fs.statSync(path1);
   var path2Stat = fs.statSync(path2);
 
-  if (path1Stat.ino === path2Stat.ino) return true;
-  return false;
+  return (path1Stat.ino === path2Stat.ino);
 };
 
 var fileSystem = {
@@ -86,7 +81,10 @@ var fileSystem = {
   },
 
   getFileBytes: function(dir){
-    return fs.readFileSync(root + dir, 'binary');
+    var path = root + dir;
+    if(_isReadablePath(path)){
+      return fs.readFileSync(path, 'binary');
+    }
   },
 
   rename: function(dir, newName){

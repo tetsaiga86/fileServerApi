@@ -5,7 +5,7 @@ var apiHandler = require('../handlers/apiHandler');
 //done:
 apiRouter.get('/list/:path?', apiHandler.handleList);
 
-apiRouter.post('/rename/:path?', apiHandler.handleRename);
+apiRouter.post('/rename/:path', apiHandler.handleRename);
 
 apiRouter.post('/mkdir/:path', apiHandler.handleMkDir);
 

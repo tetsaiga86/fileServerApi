@@ -3,14 +3,7 @@ const formidable = require('express-formidable');
 
 var apiHandler = {
   handleList: function (req, res) {
-    var path;
-    if(req.params.path){
-      path = fileSystem.sanitizedPath(req.params.path);
-      //console.log(`${path} is clean`);
-    } else {
-      path = req.params.path;
-      //console.log(`${path} doesn't exist`);
-    }
+    var path = fileSystem.sanitizedPath(req.params.path || '');
     fileSystem.getChildList(path).then(function(children){
       res.json(children);
     })
