@@ -87,6 +87,21 @@ var fileSystem = {
     }
   },
 
+  getFileSize: function(dir){
+    var path = root + dir;
+    if(_isReadablePath(path)){
+      return fs.statSync(path).size;
+    }
+  },
+
+  getFileStream: function(dir, info){
+    var path = root + dir;
+    info.flags = 'r';
+    if(_isReadablePath(path)){
+      return fs.createReadStream(path, info);
+    }
+  },
+
   rename: function(dir, newName){
     var source = root + (dir || '');
     var destination = root + newName;
