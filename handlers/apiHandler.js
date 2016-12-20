@@ -18,6 +18,7 @@ var apiHandler = {
   },
 
   handleDownload: function(req, res){
+    console.log('req.params.path= ' + req.params.path);
     var path = fileSystem.sanitizedPath(req.params.path);
     var info = {};
     var reqUrl = url.parse(req.url, true);
@@ -62,6 +63,35 @@ var apiHandler = {
       fileSystem.uploadFile(path, newFile);
       res.writeHead(202);
       res.end('try completed for:\n the file ' + path + ' has been updated');
+    }catch(e){
+      res.writeHead(500);
+      res.end(e.stack);
+    }
+  },
+
+  handleZip: function(req, res){
+    var path = fileSystem.sanitizedPath(req.params.path);
+    // var newPath = fileSystem.sanitizedPath(req.params.newPath);
+    try{
+      // var promise = fileSystem.zip(...);
+      // promise.then(function(){});
+      // promise.catch(function(){});
+      fileSystem.zip(path)
+        .then(function(value) {
+          res.setHeader('Content-Disposition', 'inline; filename=' + path + '.zip');
+          res.writeHead(200);
+
+          value.pipe(res);
+          // res.writeHead(202);
+          // res.end('try completed for:\n the file ' + path + ' has been renamed to ' + newPath);
+          // TODO : do stuff with success value
+        })
+        .catch(function(value) {
+          res.writeHead(500);
+          res.end(e.stack);
+          // TODO : do stuff with error value
+        });
+
     }catch(e){
       res.writeHead(500);
       res.end(e.stack);

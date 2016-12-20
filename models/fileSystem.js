@@ -1,6 +1,8 @@
 const fs = require('fs');
 const root = 'C:/Users/Kyle/Music/';
 var PromiseEs6 = require('es6-promise').Promise;
+var zipFolder = require('zip-folder');
+var tempfile = require('tempfile');
 
 function _sanitizedPath(path){
   var splitPath = path.split('/');
@@ -67,6 +69,26 @@ var fileSystem = {
   },
 
   sanitizedPath: _sanitizedPath,
+
+  zip: function(dir){
+    var folderPath = root + dir;
+    var zipPath = tempfile('.zip');
+    return new PromiseEs6(function(resolve, reject) {
+      zipFolder (folderPath, zipPath, function(err) {
+        if(err) {
+          console.log('oh no!', err);
+          reject(err);
+        } else {
+          var stream = fs.createReadStream(zipPath);
+          stream.on('finish', function(){
+            fileSystem.remove(zipPath);
+          });
+          resolve(stream);
+          console.log(folderPath + ' has been zipped!');
+        }
+      });
+    });
+  },
 
   uploadFile: function(dir, newFile){
     var source = newFile.path;
