@@ -17,4 +17,6 @@ apiRouter.get('/download/:path', apiHandler.handleDownload);
 
 apiRouter.post('/update/:path', apiHandler.handleUpdate);
 
+apiRouter.get('/zip/:path', apiHandler.handleZip);
+
 module.exports = apiRouter;
